@@ -1,0 +1,1135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Portfolio | {{ nom }}{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --portfolio-bg: #080d1b;
+        --portfolio-card: #111a2e;
+        --portfolio-text: #e8eefc;
+        --portfolio-muted: #a4b0c8;
+        --portfolio-accent: #7c9cff;
+        --portfolio-accent-2: #5eead4;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .portfolio {
+        margin: 0;
+        overflow: hidden;
+        background:
+            radial-gradient(ellipse at 10% 5%, rgba(68, 94, 190, .13), transparent 35%),
+            var(--portfolio-bg);
+        color: var(--portfolio-text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        line-height: 1.7;
+    }
+
+    .portfolio * {
+        box-sizing: border-box;
+    }
+
+    .portfolio .container {
+        width: min(1120px, 90%);
+        margin: auto;
+    }
+
+    .portfolio .section {
+        padding: 90px 0;
+        scroll-margin-top: 35px;
+    }
+
+    .portfolio .section-title {
+        margin: 0 0 14px;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: -1.2px;
+        line-height: 1.2;
+    }
+
+    .portfolio .section-subtitle {
+        max-width: 680px;
+        margin: 0 0 36px;
+        color: var(--portfolio-muted);
+        line-height: 1.8;
+    }
+
+    .portfolio .eyebrow {
+        display: inline-block;
+        color: var(--portfolio-accent-2);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+    }
+
+    /* HERO */
+
+    .portfolio .hero {
+        position: relative;
+        min-height: 650px;
+        display: flex;
+        align-items: center;
+        padding: 75px 0;
+        isolation: isolate;
+    }
+
+    .portfolio .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background-image:
+            linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(to bottom, black, transparent 90%);
+        pointer-events: none;
+    }
+
+    .portfolio .hero-glow {
+        position: absolute;
+        z-index: -1;
+        width: 380px;
+        height: 380px;
+        border-radius: 50%;
+        background: rgba(83, 108, 255, .16);
+        filter: blur(100px);
+        top: 10%;
+        right: 4%;
+        animation: glowMove 8s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+
+    .portfolio .hero-layout {
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        align-items: center;
+        gap: 65px;
+    }
+
+    .portfolio .hero h1 {
+        margin: 0 0 18px;
+        font-size: clamp(40px, 6vw, 70px);
+        line-height: 1.08;
+        letter-spacing: -2.5px;
+    }
+
+    .portfolio .hero h1 span {
+        display: block;
+        color: var(--portfolio-accent);
+    }
+
+    .portfolio .hero-description {
+        max-width: 590px;
+        margin: 0 0 28px;
+        color: var(--portfolio-muted);
+        font-size: 17px;
+        line-height: 1.9;
+    }
+
+    .portfolio .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 28px 0;
+    }
+
+    .portfolio .btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        padding: 13px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        transition: transform .25s ease, background .25s ease;
+    }
+
+    .portfolio .btn:hover {
+        transform: translateY(-3px);
+    }
+
+    .portfolio .btn-primary {
+        background: var(--portfolio-accent);
+        color: #071020;
+    }
+
+    .portfolio .btn-primary:hover {
+        background: #a2b6ff;
+        color: #071020;
+    }
+
+    .portfolio .btn-secondary {
+        color: var(--portfolio-text);
+        border: 1px solid #33415e;
+        background: rgba(255,255,255,.03);
+    }
+
+    .portfolio .btn-secondary:hover {
+        background: rgba(255,255,255,.08);
+    }
+
+    .portfolio .tech-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 25px;
+    }
+
+    .portfolio .tech-chip {
+        padding: 7px 12px;
+        color: #cbd7f3;
+        background: rgba(124,156,255,.08);
+        border: 1px solid rgba(124,156,255,.2);
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* PHOTO DE PROFIL RECTANGULAIRE */
+
+    .portfolio .profile-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 360px;
+        margin: auto;
+        animation: floatPhoto 6s ease-in-out infinite;
+    }
+
+    .portfolio .profile-wrapper::before {
+        content: "";
+        position: absolute;
+        inset: -14px 14px 14px -14px;
+        border: 1px solid rgba(124,156,255,.65);
+        border-radius: 24px;
+        z-index: -1;
+    }
+
+    .portfolio .profile-photo {
+        display: block;
+        width: 100%;
+        height: 420px;
+        object-fit: cover;
+        object-position: center 20%;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,.15);
+        box-shadow: 0 25px 70px rgba(0,0,0,.4);
+        background: #17213a;
+    }
+
+    .portfolio .profile-caption {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        padding: 15px 17px;
+        background: rgba(8,13,27,.82);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 12px;
+    }
+
+    .portfolio .profile-caption strong {
+        display: block;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+
+    .portfolio .profile-caption span {
+        color: var(--portfolio-accent-2);
+        font-size: 12px;
+    }
+
+    /* A PROPOS */
+
+    .portfolio .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    .portfolio .info-card {
+        padding: 28px;
+        background: var(--portfolio-card);
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 18px;
+    }
+
+    .portfolio .info-card h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+
+    .portfolio .info-card p {
+        margin: 0;
+        color: var(--portfolio-muted);
+        line-height: 1.9;
+    }
+
+    /* PROJETS */
+
+    .portfolio .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .portfolio .project-card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+        background: var(--portfolio-card);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 17px;
+        transition: transform .3s ease, border-color .3s ease,
+                    box-shadow .3s ease;
+    }
+
+    .portfolio .project-card:hover {
+        transform: translateY(-7px);
+        border-color: rgba(124,156,255,.55);
+        box-shadow: 0 18px 40px rgba(0,0,0,.2);
+    }
+
+    .portfolio .project-image {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background: linear-gradient(135deg, #19284a, #17213a);
+    }
+
+    .portfolio .project-image img {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+        transition: transform .45s ease;
+    }
+
+    .portfolio .project-card:hover .project-image img {
+        transform: scale(1.05);
+    }
+
+    .portfolio .project-placeholder {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        color: var(--portfolio-accent-2);
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+
+    .portfolio .project-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 22px;
+    }
+
+    .portfolio .project-content h3 {
+        margin: 0 0 12px;
+        font-size: 19px;
+        line-height: 1.4;
+    }
+
+    .portfolio .project-content p {
+        flex: 1;
+        margin: 0 0 18px;
+        color: var(--portfolio-muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .portfolio .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 18px;
+    }
+
+    .portfolio .project-tags span {
+        padding: 5px 8px;
+        border-radius: 6px;
+        background: rgba(94,234,212,.08);
+        color: var(--portfolio-accent-2);
+        font-size: 11px;
+    }
+
+    .portfolio .project-link {
+        color: var(--portfolio-accent);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .portfolio .project-link:hover {
+        color: #b4c4ff;
+    }
+
+    /* EXPERIENCE */
+
+    .portfolio .timeline {
+        display: grid;
+        gap: 18px;
+    }
+
+    .portfolio .timeline-item {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 25px;
+        padding: 25px;
+        background: var(--portfolio-card);
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 15px;
+    }
+
+    .portfolio .timeline-date {
+        color: var(--portfolio-accent-2);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .portfolio .timeline-item h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .portfolio .timeline-item p {
+        margin: 0;
+        color: var(--portfolio-muted);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    /* COMPETENCES */
+
+    .portfolio .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .portfolio .skill-card {
+        padding: 24px;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 15px;
+        background: var(--portfolio-card);
+    }
+
+    .portfolio .skill-card h3 {
+        margin: 0 0 16px;
+        font-size: 17px;
+    }
+
+    .portfolio .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .portfolio .skill-tags span {
+        padding: 7px 10px;
+        border-radius: 7px;
+        background: #1b2741;
+        color: #d4def5;
+        font-size: 12px;
+    }
+
+    /* LANGUES */
+
+    .portfolio .languages-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .portfolio .language-card {
+        padding: 22px 15px;
+        text-align: center;
+        background: var(--portfolio-card);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 14px;
+    }
+
+    .portfolio .language-card strong {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .portfolio .language-card span {
+        color: var(--portfolio-muted);
+        font-size: 13px;
+    }
+
+    /* CONTACT */
+
+    .portfolio .contact-box {
+        padding: 45px 25px;
+        text-align: center;
+        border-radius: 22px;
+        border: 1px solid rgba(124,156,255,.2);
+        background:
+            radial-gradient(ellipse at top, rgba(124,156,255,.12), transparent 70%),
+            var(--portfolio-card);
+    }
+
+    .portfolio .contact-box p {
+        max-width: 580px;
+        margin: 0 auto 25px;
+        color: var(--portfolio-muted);
+        line-height: 1.8;
+    }
+
+    .portfolio .contact-email {
+        display: inline-block;
+        margin-top: 15px;
+        color: var(--portfolio-accent-2);
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    /* FOOTER */
+
+    .portfolio .portfolio-footer {
+        padding: 25px 0;
+        text-align: center;
+        border-top: 1px solid rgba(255,255,255,.07);
+        color: var(--portfolio-muted);
+        font-size: 12px;
+    }
+
+    /* ANIMATIONS */
+
+    .portfolio .reveal {
+        opacity: 0;
+        transform: translateY(25px);
+        transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .portfolio .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @keyframes floatPhoto {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    @keyframes glowMove {
+        from {
+            transform: translate(0, 0);
+        }
+        to {
+            transform: translate(-30px, 25px);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .portfolio *,
+        .portfolio *::before,
+        .portfolio *::after {
+            scroll-behavior: auto !important;
+            animation: none !important;
+            transition: none !important;
+        }
+
+        .portfolio .reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* TABLETTES ET TELEPHONES */
+
+    @media (max-width: 900px) {
+        .portfolio .hero-layout {
+            grid-template-columns: 1fr;
+            gap: 50px;
+        }
+
+        .portfolio .hero {
+            padding: 65px 0;
+        }
+
+        .portfolio .hero-content {
+            text-align: center;
+        }
+
+        .portfolio .hero-description {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .portfolio .hero-actions,
+        .portfolio .tech-list {
+            justify-content: center;
+        }
+
+        .portfolio .profile-wrapper {
+            width: min(330px, 85%);
+        }
+
+        .portfolio .profile-photo {
+            height: 380px;
+        }
+
+        .portfolio .projects-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .portfolio .skills-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .portfolio .section {
+            padding: 60px 0;
+        }
+
+        .portfolio .hero h1 {
+            letter-spacing: -1.5px;
+        }
+
+        .portfolio .about-grid,
+        .portfolio .projects-grid,
+        .portfolio .skills-grid,
+        .portfolio .languages-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .portfolio .timeline-item {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .portfolio .profile-photo {
+            height: 350px;
+        }
+
+        .portfolio .info-card {
+            padding: 22px;
+        }
+
+        .portfolio .btn {
+            width: 100%;
+        }
+
+        .portfolio .hero-actions {
+            align-items: stretch;
+        }
+
+        .portfolio .project-content {
+            padding: 19px;
+        }
+    }
+</style>
+
+<div class="portfolio">
+
+    {# ACCUEIL #}
+    <section class="hero" id="accueil">
+        <div class="hero-glow"></div>
+
+        <div class="container hero-layout">
+            <div class="hero-content reveal">
+                <span class="eyebrow">Développeuse web et web mobile</span>
+
+                <h1>
+                    Bonjour, je suis
+                    <span>{{ nom }}</span>
+                </h1>
+
+                <p class="hero-description">
+                    {{ titre }}. Je conçois des applications web modernes,
+                    fonctionnelles et adaptées aux besoins des utilisateurs.
+                    J'aime apprendre, créer et améliorer mes compétences
+                    dans le développement web.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#projets" class="btn btn-primary">
+                        Découvrir mes projets →
+                    </a>
+
+                    <a href="#contact" class="btn btn-secondary">
+                        Me contacter
+                    </a>
+                </div>
+
+                <div class="tech-list">
+                    <span class="tech-chip">PHP</span>
+                    <span class="tech-chip">Symfony</span>
+                    <span class="tech-chip">JavaScript</span>
+                    <span class="tech-chip">HTML / CSS</span>
+                    <span class="tech-chip">MySQL</span>
+                </div>
+            </div>
+
+            {# PHOTO DE PROFIL #}
+            <div class="profile-wrapper reveal">
+                <img
+                    class="profile-photo"
+                    src="{{ asset('images/photo1.jpg') }}"
+                    alt="Portrait de {{ nom }}"
+                >
+
+                <div class="profile-caption">
+                    <strong>{{ nom }}</strong>
+                    <span>Développement web · Symfony · PHP</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# A PROPOS #}
+    <section class="section" id="apropos">
+        <div class="container">
+            <div class="reveal">
+                <span class="eyebrow">Qui suis-je ?</span>
+                <h2 class="section-title">À propos de moi</h2>
+                <p class="section-subtitle">
+                    Mon parcours, mes objectifs et ma passion pour le numérique.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <article class="info-card reveal">
+                    <h3>Mon parcours</h3>
+                    <p>
+                        Après des études en économie et en finance, j'ai choisi
+                        de me former au développement web et web mobile.
+                        Cette reconversion me permet de réunir ma rigueur,
+                        mon sens de l'organisation et mon intérêt pour la technologie.
+                    </p>
+                </article>
+
+                <article class="info-card reveal">
+                    <h3>Mon objectif</h3>
+                    <p>
+                        Je souhaite continuer à progresser en développement
+                        front-end et back-end, participer à des projets concrets
+                        et créer des applications accessibles, fiables et agréables
+                        à utiliser.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# PROJETS #}
+    <section class="section" id="projets">
+        <div class="container">
+            <div class="reveal">
+                <span class="eyebrow">Mes réalisations</span>
+                <h2 class="section-title">Mes projets</h2>
+                <p class="section-subtitle">
+                    Quelques projets réalisés pendant ma formation et dans
+                    le cadre de mon apprentissage du développement web.
+                </p>
+            </div>
+
+            <div class="projects-grid">
+
+                <article class="project-card reveal">
+                    <div class="project-image">
+                        <div class="project-placeholder">LINDT</div>
+                        <img
+                            src="{{ asset('images/lindt-shop.jpg') }}"
+                            alt="Capture du site e-commerce Lindt"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="project-content">
+                        <h3>E-shop Lindt</h3>
+                        <p>
+                            Développement d'une boutique en ligne de chocolats
+                            avec gestion des produits, catégories et utilisateurs.
+                            Le projet utilise Symfony et une base de données.
+                        </p>
+                        <div class="project-tags">
+                            <span>Symfony</span>
+                            <span>PHP</span>
+                            <span>Doctrine</span>
+                            <span>MySQL</span>
+                            <span>Twig</span>
+                        </div>
+                        <span class="project-link">Projet en cours</span>
+                    </div>
+                </article>
+
+                <article class="project-card reveal">
+                    <div class="project-image">
+                        <div class="project-placeholder">GALLERY</div>
+                    </div>
+
+                    <div class="project-content">
+                        <h3>FocusGallery</h3>
+                        <p>
+                            Application de gestion de photos avec utilisateurs,
+                            catégories et interface d'administration pour organiser
+                            les contenus.
+                        </p>
+                        <div class="project-tags">
+                            <span>Symfony</span>
+                            <span>PHP</span>
+                            <span>EasyAdmin</span>
+                            <span>MySQL</span>
+                        </div>
+                        <span class="project-link">Application web</span>
+                    </div>
+                </article>
+
+                <article class="project-card reveal">
+                    <div class="project-image">
+                        <div class="project-placeholder">BOOKS</div>
+                        <img
+                            src="{{ asset('images/bibliotheque.jpg') }}"
+                            alt="Capture du projet Ma Bibliothèque"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="project-content">
+                        <h3>Ma Bibliothèque</h3>
+                        <p>
+                            Site de présentation et d'organisation de livres
+                            autour de plusieurs catégories : romans, mangas,
+                            informatique et horreur.
+                        </p>
+                        <div class="project-tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
+                        <span class="project-link">Projet de formation</span>
+                    </div>
+                </article>
+
+                <article class="project-card reveal">
+                    <div class="project-image">
+                        <div class="project-placeholder">ÉLÉGANCE</div>
+                        <img
+                            src="{{ asset('images/elegance.jpg') }}"
+                            alt="Capture du site Éternelle Élégance"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="project-content">
+                        <h3>Éternelle Élégance</h3>
+                        <p>
+                            Projet de boutique de robes pour les mariages et
+                            les soirées, avec des modèles longs et courts.
+                        </p>
+                        <div class="project-tags">
+                            <span>PHP</span>
+                            <span>HTML / CSS</span>
+                            <span>JavaScript</span>
+                            <span>MySQL</span>
+                        </div>
+                        <span class="project-link">Projet e-commerce</span>
+                    </div>
+                </article>
+
+                <article class="project-card reveal">
+                    <div class="project-image">
+                        <div class="project-placeholder">CONTACT</div>
+                    </div>
+
+                    <div class="project-content">
+                        <h3>Formulaire Choubroc</h3>
+                        <p>
+                            Création d'un formulaire de contact avec traitement
+                            des données en PHP et enregistrement en base de données
+                            à l'aide de PDO.
+                        </p>
+                        <div class="project-tags">
+                            <span>PHP</span>
+                            <span>PDO</span>
+                            <span>MySQL</span>
+                            <span>HTML / CSS</span>
+                        </div>
+                        <span class="project-link">Projet de formation</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    {# EXPERIENCE ET FORMATION #}
+    <section class="section" id="parcours">
+        <div class="container">
+            <div class="reveal">
+                <span class="eyebrow">Mon parcours</span>
+                <h2 class="section-title">Expérience et formation</h2>
+                <p class="section-subtitle">
+                    Les principales étapes de mon parcours professionnel
+                    et de ma formation.
+                </p>
+            </div>
+
+            <div class="timeline">
+                <article class="timeline-item reveal">
+                    <div class="timeline-date">Février – Mars 2026</div>
+                    <div>
+                        <h3>Stage en développement web — Wess Soft, Lyon</h3>
+                        <p>
+                            Découverte du travail en entreprise et mise en pratique
+                            des compétences acquises en développement web.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="timeline-item reveal">
+                    <div class="timeline-date">2025</div>
+                    <div>
+                        <h3>Marionnaud — Francheville</h3>
+                        <p>
+                            Expérience professionnelle dans le commerce,
+                            avec le sens du service, l'organisation et le travail
+                            en équipe.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="timeline-item reveal">
+                    <div class="timeline-date">2025 – 2026</div>
+                    <div>
+                        <h3>Titre professionnel Développeur Web et Web Mobile — AFEC, Lyon</h3>
+                        <p>
+                            Formation professionnelle de niveau Bac+2 portant
+                            sur la création de sites et d'applications web,
+                            le développement front-end et back-end et les bases
+                            de données.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="timeline-item reveal">
+                    <div class="timeline-date">2012</div>
+                    <div>
+                        <h3>Études en économie et finance — Université de Pristina</h3>
+                        <p>
+                            Deux années d'études en économie et finance.
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# COMPETENCES #}
+    <section class="section" id="competences">
+        <div class="container">
+            <div class="reveal">
+                <span class="eyebrow">Savoir-faire</span>
+                <h2 class="section-title">Mes compétences techniques</h2>
+                <p class="section-subtitle">
+                    Les technologies et outils que j'utilise dans mes projets.
+                </p>
+            </div>
+
+            <div class="skills-grid">
+                <article class="skill-card reveal">
+                    <h3>Front-end</h3>
+                    <div class="skill-tags">
+                        <span>HTML5</span>
+                        <span>CSS3</span>
+                        <span>JavaScript</span>
+                        <span>Responsive design</span>
+                    </div>
+                </article>
+
+                <article class="skill-card reveal">
+                    <h3>Back-end</h3>
+                    <div class="skill-tags">
+                        <span>PHP</span>
+                        <span>Symfony</span>
+                        <span>Node.js</span>
+                        <span>Python</span>
+                    </div>
+                </article>
+
+                <article class="skill-card reveal">
+                    <h3>Bases de données</h3>
+                    <div class="skill-tags">
+                        <span>MySQL</span>
+                        <span>SQL</span>
+                        <span>Doctrine</span>
+                        <span>PDO</span>
+                    </div>
+                </article>
+
+                <article class="skill-card reveal">
+                    <h3>Outils</h3>
+                    <div class="skill-tags">
+                        <span>Git</span>
+                        <span>GitHub</span>
+                        <span>Composer</span>
+                        <span>phpMyAdmin</span>
+                    </div>
+                </article>
+
+                <article class="skill-card reveal">
+                    <h3>Sécurité et qualité</h3>
+                    <div class="skill-tags">
+                        <span>Validation des données</span>
+                        <span>Requêtes préparées</span>
+                        <span>Sessions PHP</span>
+                        <span>Protection XSS</span>
+                    </div>
+                </article>
+
+                <article class="skill-card reveal">
+                    <h3>Gestion de contenu</h3>
+                    <div class="skill-tags">
+                        <span>Twig</span>
+                        <span>EasyAdmin</span>
+                        <span>Formulaires</span>
+                        <span>CRUD</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# LANGUES #}
+    <section class="section" id="langues">
+        <div class="container">
+            <div class="reveal">
+                <span class="eyebrow">Communication</span>
+                <h2 class="section-title">Langues</h2>
+            </div>
+
+            <div class="languages-grid">
+                <div class="language-card reveal">
+                    <strong>Albanais</strong>
+                    <span>Langue maternelle</span>
+                </div>
+
+                <div class="language-card reveal">
+                    <strong>Français</strong>
+                    <span>Niveau B2 — DELF B2</span>
+                </div>
+
+                <div class="language-card reveal">
+                    <strong>Allemand</strong>
+                    <span>Niveau B1</span>
+                </div>
+
+                <div class="language-card reveal">
+                    <strong>Anglais</strong>
+                    <span>Notions de base</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# CONTACT #}
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="contact-box reveal">
+                <span class="eyebrow">Restons en contact</span>
+                <h2 class="section-title">Un projet ou une opportunité ?</h2>
+
+                <p>
+                    Vous souhaitez échanger sur un projet web, une collaboration
+                    ou une opportunité professionnelle ? Vous pouvez me contacter
+                    par e-mail.
+                </p>
+
+                <a
+                    href="mailto:edona.qorrajj@hotmail.com"
+                    class="btn btn-primary"
+                >
+                    ✉ M'envoyer un e-mail
+                </a>
+
+                <br>
+
+                <a
+                    class="contact-email"
+                    href="mailto:edona.qorrajj@hotmail.com"
+                >
+                    edona.qorrajj@hotmail.com
+                </a>
+
+                <p style="margin-top: 20px; margin-bottom: 0;">
+                    <a
+                        class="project-link"
+                        href="https://github.com/Edona35"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Voir mon GitHub →
+                    </a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="portfolio-footer">
+        <div class="container">
+            © {{ "now"|date("Y") }} {{ nom }} — Portfolio développeuse web et web mobile.
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const elements = document.querySelectorAll('.portfolio .reveal');
+
+        if (!('IntersectionObserver' in window)) {
+            elements.forEach(function (element) {
+                element.classList.add('visible');
+            });
+            return;
+        }
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.12
+        });
+
+        elements.forEach(function (element) {
+            observer.observe(element);
+        });
+    });
+</script>
+{% endblock %}
+
