@@ -1,3 +1,4 @@
+
 FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -15,7 +16,8 @@ ENV APP_DEBUG=0
 
 COPY . .
 
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts \
+RUN touch .env \
+    && composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts \
     && mkdir -p var/cache var/log \
     && chown -R www-data:www-data var
 
