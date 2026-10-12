@@ -18,6 +18,8 @@ COPY . .
 
 RUN touch .env \
     && composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts \
+    && php bin/console importmap:install --env=prod \
+    && php bin/console asset-map:compile --env=prod \
     && mkdir -p var/cache var/log \
     && chown -R www-data:www-data var
 
